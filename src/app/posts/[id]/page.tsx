@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
@@ -24,7 +24,12 @@ interface Post {
   };
 }
 
-export default function PostPage({ params }: { params: { id: string } }) {
+export default function PostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   const [post, setPost] = useState<Post | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
@@ -34,7 +39,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/posts/${params.id}`);
+        const response = await fetch(`/api/posts/${id}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -49,10 +54,10 @@ export default function PostPage({ params }: { params: { id: string } }) {
       }
     };
 
-    if (params.id) {
+    if (id) {
       fetchPost();
     }
-  }, [params.id]);
+  }, [id]);
 
   if (isLoading) {
     return (
