@@ -1,17 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
 import { verifyAuth } from "@/lib/auth";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const { db } = await connectToDatabase();
 
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ message: "Invalid post ID" }, { status: 400 });
+    }
+
     const post = await db.collection("posts").findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     });
 
     if (!post) {
@@ -30,9 +35,10 @@ export async function GET(
 
 export async function PUT(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const authResult = await verifyAuth(request);
 
     if (!authResult.isAuthenticated) {
@@ -52,7 +58,7 @@ export async function PUT(
 
     // Check if post exists
     const post = await db.collection("posts").findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     });
 
     if (!post) {
@@ -80,7 +86,7 @@ export async function PUT(
 
     await db
       .collection("posts")
-      .updateOne({ _id: new ObjectId(params.id) }, { $set: updateData });
+      .updateOne({ _id: new ObjectId(id) }, { $set: updateData });
 
     return NextResponse.json({
       message: "Post updated successfully",
@@ -96,9 +102,10 @@ export async function PUT(
 
 export async function DELETE(
   request: Request,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const { id } = await params;
     const authResult = await verifyAuth(request);
 
     if (!authResult.isAuthenticated) {
@@ -109,7 +116,7 @@ export async function DELETE(
 
     // Check if post exists
     const post = await db.collection("posts").findOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     });
 
     if (!post) {
@@ -128,7 +135,7 @@ export async function DELETE(
     }
 
     await db.collection("posts").deleteOne({
-      _id: new ObjectId(params.id),
+      _id: new ObjectId(id),
     });
 
     return NextResponse.json({

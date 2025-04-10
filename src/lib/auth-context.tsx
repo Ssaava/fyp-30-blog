@@ -6,6 +6,7 @@ import {
   useState,
   useEffect,
   type ReactNode,
+  useCallback,
 } from "react";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
@@ -32,6 +33,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  const logout = useCallback(() => {
+    Cookies.remove("token");
+    localStorage.removeItem("user");
+    setUser(null);
+    router.push("/login");
+  }, [router]);
+
   useEffect(() => {
     // Check if user is logged in
     const token = Cookies.get("token");
@@ -47,19 +55,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     setLoading(false);
-  }, []);
+  }, [logout]);
 
   const login = (token: string, userData: User) => {
     Cookies.set("token", token, { expires: 1 }); // 1 day
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
-  };
-
-  const logout = () => {
-    Cookies.remove("token");
-    localStorage.removeItem("user");
-    setUser(null);
-    router.push("/login");
   };
 
   return (
@@ -76,7 +77,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     </AuthContext.Provider>
   );
 }
-
 export function useAuth() {
   const context = useContext(AuthContext);
   if (context === undefined) {

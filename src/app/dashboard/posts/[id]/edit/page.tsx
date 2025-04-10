@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import type React from "react";
-
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -33,7 +31,12 @@ interface Post {
   };
 }
 
-export default function EditPostPage({ params }: { params: { id: string } }) {
+export default function EditPostPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = use(params);
   const [post, setPost] = useState<Post | null>(null);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
@@ -45,6 +48,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   const router = useRouter();
   const { user, isAuthenticated, loading } = useAuth();
 
+  console.log("Id: ", id);
   useEffect(() => {
     if (!loading && !isAuthenticated) {
       router.push("/login");
@@ -54,7 +58,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/posts/${params.id}`);
+        const response = await fetch(`/api/posts/${id}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -72,10 +76,10 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
       }
     };
 
-    if (params.id && isAuthenticated) {
+    if (id && isAuthenticated) {
       fetchPost();
     }
-  }, [params.id, isAuthenticated]);
+  }, [id, isAuthenticated]);
 
   const handleAddTag = () => {
     if (currentTag.trim() && !tags.includes(currentTag.trim())) {
@@ -110,7 +114,7 @@ export default function EditPostPage({ params }: { params: { id: string } }) {
     setError("");
 
     try {
-      const response = await fetch(`/api/posts/${params.id}`, {
+      const response = await fetch(`/api/posts/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
