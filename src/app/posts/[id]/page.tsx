@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -25,7 +25,7 @@ interface Post {
   };
 }
 
-export default function PostPage({ params }: { params: { id: string } }) {
+export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
   const [authorAvatar, setAuthorAvatar] = useState<string>(
     "/placeholder.svg?height=200&width=200"
@@ -34,6 +34,7 @@ export default function PostPage({ params }: { params: { id: string } }) {
   const [error, setError] = useState("");
   const router = useRouter();
   const { user } = useAuth();
+  const params = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchPost = async () => {

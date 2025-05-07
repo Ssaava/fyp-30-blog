@@ -1,23 +1,21 @@
-import { NextResponse } from "next/server";
 import { connectToDatabase } from "@/lib/mongodb";
 import { ObjectId } from "mongodb";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
-  request: Request,
-  { params }: { params: { id: string } }
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const { id } = params;
   try {
+    const { id } = await params;
     const { db } = await connectToDatabase();
 
-    // Validate ObjectId
-    let userId: ObjectId;
-    try {
-      userId = new ObjectId(id);
-    } catch (error) {
-      console.log(error);
-      return NextResponse.json({ message: "Invalid user ID" }, { status: 400 });
+    // check if Author id Exists
+    if (!ObjectId.isValid(id)) {
+      return NextResponse.json({ message: "Invalid User ID" }, { status: 400 });
     }
+
+    const userId = new ObjectId(id);
 
     // Get user with public information only
     const user = await db.collection("users").findOne(
