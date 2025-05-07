@@ -7,8 +7,11 @@
     "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
-    "module": "esnext",
+    "module": "esNext",
+    // "module": "CommonJS",
     "moduleResolution": "bundler",
+    // "moduleResolution": "node",
+    // "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
@@ -22,6 +25,12 @@
       "@/*": ["./src/*"]
     }
   },
+  // "ts-node": {
+  //   "transpileOnly": true,
+  //   "compilerOptions": {
+  //     "module": "commonjs"
+  //   }
+  // },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
   "exclude": ["node_modules"]
 }

@@ -213,7 +213,7 @@ export function PostList() {
                   onClick={(e) => {
                     e.stopPropagation();
                     router.push(
-                      `/?author=${encodeURIComponent(post.author._id)}`
+                      `/authors/${encodeURIComponent(post.author._id)}`
                     );
                   }}
                 >

@@ -6,8 +6,8 @@ import { Button } from "@/components/ui/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
-  const { user, isAuthenticated } = useAuth();
-  console.log("User: ", user);
+  const { isAuthenticated } = useAuth();
+
   return (
     <header className="border-b">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
