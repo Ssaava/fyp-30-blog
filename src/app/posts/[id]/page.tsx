@@ -7,7 +7,7 @@ import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Sidebar } from "@/components/sidebar";
+import { Sidebar } from "@/components/side-bar/sidebar";
 import { Header } from "@/components/header";
 import { useAuth } from "@/lib/auth-context";
 import { MarkdownRenderer } from "@/components/markdown-renderer";

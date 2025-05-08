@@ -1,7 +1,7 @@
 "use client";
 
 import { Suspense } from "react";
-import { AuthorFilter } from "./author-filter";
+import { AuthorFilter } from "../author-filter";
 import { RecentPosts } from "./recent-posts";
 import { SearchBox } from "./search-box";
 import { TagCloud } from "./tag-cloud";
