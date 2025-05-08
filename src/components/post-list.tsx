@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect, Suspense } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { format } from "date-fns";
 import {
   Card,
@@ -16,7 +16,6 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AlertCircle } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { PostFilters } from "./post-filters";
 
 interface Post {
   _id: string;
@@ -34,28 +33,35 @@ export function PostList() {
   const [posts, setPosts] = useState<Post[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const [filters, setFilters] = useState<{
-    authorId: string | null;
-    searchTerm: string | null;
-    tag: string | null;
-  }>({
-    authorId: null,
-    searchTerm: null,
-    tag: null,
-  });
-
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get search parameters
+  const authorId = searchParams.get("author");
+  const searchTerm = searchParams.get("search");
+  const tag = searchParams.get("tag");
 
   useEffect(() => {
     const fetchPosts = async () => {
       try {
         setIsLoading(true);
 
+        // Build query parameters
         const params = new URLSearchParams();
-        if (filters.authorId) params.set("author", filters.authorId);
-        if (filters.searchTerm) params.set("search", filters.searchTerm);
-        if (filters.tag) params.set("tag", filters.tag);
 
+        if (authorId) {
+          params.set("author", authorId);
+        }
+
+        if (searchTerm) {
+          params.set("search", searchTerm);
+        }
+
+        if (tag) {
+          params.set("tag", tag);
+        }
+
+        // Fetch posts with filters
         const response = await fetch(`/api/posts?${params.toString()}`);
         const data = await response.json();
 
@@ -72,162 +78,160 @@ export function PostList() {
     };
 
     fetchPosts();
-  }, [filters]);
+  }, [authorId, searchTerm, tag]);
 
-  const { authorId, searchTerm, tag } = filters;
+  if (isLoading) {
+    return (
+      <div className="space-y-4">
+        {[...Array(3)].map((_, i) => (
+          <Card key={i}>
+            <CardHeader>
+              <Skeleton className="h-8 w-3/4" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-4 w-full mb-2" />
+              <Skeleton className="h-4 w-5/6" />
+            </CardContent>
+            <CardFooter>
+              <Skeleton className="h-4 w-1/3" />
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Alert variant="destructive">
+        <AlertCircle className="h-4 w-4" />
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>
+    );
+  }
+
+  // Show active filters if any
   const hasFilters = authorId || searchTerm || tag;
+
+  if (posts.length === 0) {
+    return (
+      <div>
+        {hasFilters && (
+          <div className="mb-6">
+            <h2 className="text-lg font-medium mb-2">Active filters:</h2>
+            <div className="flex flex-wrap gap-2">
+              {authorId && <Badge variant="secondary">Author filter</Badge>}
+              {searchTerm && (
+                <Badge variant="secondary">Search: {searchTerm}</Badge>
+              )}
+              {tag && <Badge variant="secondary">Tag: {tag}</Badge>}
+            </div>
+            <Button
+              variant="link"
+              className="px-0 mt-2"
+              onClick={() => router.push("/")}
+            >
+              Clear all filters
+            </Button>
+          </div>
+        )}
+        <div className="text-center py-8 bg-muted/30 rounded-lg">
+          <p className="text-muted-foreground">No posts found</p>
+          {hasFilters && (
+            <p className="mt-2 text-sm text-muted-foreground">
+              Try adjusting your search filters
+            </p>
+          )}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div>
-      <Suspense fallback={<div>Filtering Posts...</div>}>
-        <PostFilters onFiltersChange={setFilters} />
-      </Suspense>
-
-      {isLoading && (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-8 w-3/4" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-5/6" />
-              </CardContent>
-              <CardFooter>
-                <Skeleton className="h-4 w-1/3" />
-              </CardFooter>
-            </Card>
-          ))}
-        </div>
-      )}
-
-      {!isLoading && error && (
-        <Alert variant="destructive">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {!isLoading && !error && posts.length === 0 && (
-        <div>
-          {hasFilters && (
-            <div className="mb-6">
-              <h2 className="text-lg font-medium mb-2">Active filters:</h2>
-              <div className="flex flex-wrap gap-2">
-                {authorId && <Badge variant="secondary">Author filter</Badge>}
-                {searchTerm && (
-                  <Badge variant="secondary">Search: {searchTerm}</Badge>
-                )}
-                {tag && <Badge variant="secondary">Tag: {tag}</Badge>}
-              </div>
-              <Button
-                variant="link"
-                className="px-0 mt-2"
-                onClick={() => router.push("/")}
-              >
-                Clear all filters
-              </Button>
-            </div>
-          )}
-          <div className="text-center py-8 bg-muted/30 rounded-lg">
-            <p className="text-muted-foreground">No posts found</p>
-            {hasFilters && (
-              <p className="mt-2 text-sm text-muted-foreground">
-                Try adjusting your search filters
-              </p>
+      {hasFilters && (
+        <div className="mb-6">
+          <h2 className="text-lg font-medium mb-2">Active filters:</h2>
+          <div className="flex flex-wrap gap-2">
+            {authorId && <Badge variant="secondary">Author filter</Badge>}
+            {searchTerm && (
+              <Badge variant="secondary">Search: {searchTerm}</Badge>
             )}
+            {tag && <Badge variant="secondary">Tag: {tag}</Badge>}
           </div>
+          <Button
+            variant="link"
+            className="px-0 mt-2"
+            onClick={() => router.push("/")}
+          >
+            Clear all filters
+          </Button>
         </div>
       )}
 
-      {!isLoading && !error && posts.length > 0 && (
-        <div>
-          {hasFilters && (
-            <div className="mb-6">
-              <h2 className="text-lg font-medium mb-2">Active filters:</h2>
-              <div className="flex flex-wrap gap-2">
-                {authorId && <Badge variant="secondary">Author filter</Badge>}
-                {searchTerm && (
-                  <Badge variant="secondary">Search: {searchTerm}</Badge>
-                )}
-                {tag && <Badge variant="secondary">Tag: {tag}</Badge>}
+      <div className="space-y-6">
+        {posts.map((post) => (
+          <Card key={post._id} className="overflow-hidden">
+            <CardHeader>
+              <CardTitle className="text-2xl">
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-2xl font-bold hover:no-underline"
+                  onClick={() => router.push(`/posts/${post._id}`)}
+                >
+                  {post.title}
+                </Button>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="line-clamp-3 text-muted-foreground">
+                {post.content.replace(/[#*`]/g, "").substring(0, 200)}...
+              </p>
+              <div className="flex flex-wrap gap-2 mt-4">
+                {post.tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      router.push(`/?tag=${encodeURIComponent(tag)}`);
+                    }}
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </CardContent>
+            <CardFooter className="flex justify-between items-center">
+              <div className="text-sm text-muted-foreground">
+                By{" "}
+                <Button
+                  variant="link"
+                  className="p-0 h-auto text-sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    router.push(
+                      `/authors/${encodeURIComponent(post.author._id)}`
+                    );
+                  }}
+                >
+                  {post.author.name}
+                </Button>{" "}
+                • {format(new Date(post.createdAt), "MMMM d, yyyy")}
               </div>
               <Button
-                variant="link"
-                className="px-0 mt-2"
-                onClick={() => router.push("/")}
+                variant="outline"
+                size="sm"
+                onClick={() => router.push(`/posts/${post._id}`)}
               >
-                Clear all filters
+                Read More
               </Button>
-            </div>
-          )}
-
-          <div className="space-y-6">
-            {posts.map((post) => (
-              <Card key={post._id} className="overflow-hidden">
-                <CardHeader>
-                  <CardTitle className="text-2xl">
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto text-2xl font-bold hover:no-underline"
-                      onClick={() => router.push(`/posts/${post._id}`)}
-                    >
-                      {post.title}
-                    </Button>
-                  </CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="line-clamp-3 text-muted-foreground">
-                    {post.content.replace(/[#*`]/g, "").substring(0, 200)}...
-                  </p>
-                  <div className="flex flex-wrap gap-2 mt-4">
-                    {post.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="secondary"
-                        className="cursor-pointer"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          router.push(`/?tag=${encodeURIComponent(tag)}`);
-                        }}
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </CardContent>
-                <CardFooter className="flex justify-between items-center">
-                  <div className="text-sm text-muted-foreground">
-                    By{" "}
-                    <Button
-                      variant="link"
-                      className="p-0 h-auto text-sm"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(
-                          `/authors/${encodeURIComponent(post.author._id)}`
-                        );
-                      }}
-                    >
-                      {post.author.name}
-                    </Button>{" "}
-                    • {format(new Date(post.createdAt), "MMMM d, yyyy")}
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => router.push(`/posts/${post._id}`)}
-                  >
-                    Read More
-                  </Button>
-                </CardFooter>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
+            </CardFooter>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }
