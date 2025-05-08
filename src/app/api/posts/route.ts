@@ -10,6 +10,9 @@ export async function GET(request: Request) {
     const authorId = searchParams.get("author");
     const tag = searchParams.get("tag");
     const search = searchParams.get("search");
+    const limit = searchParams.get("limit")
+      ? Number.parseInt(searchParams.get("limit") as string)
+      : undefined;
 
     const { db } = await connectToDatabase();
 
@@ -17,7 +20,14 @@ export async function GET(request: Request) {
     const query: any = { published: true };
 
     if (authorId) {
-      query["author._id"] = new ObjectId(authorId);
+      try {
+        // Make sure it's a valid ObjectId
+        query["author._id"] = new ObjectId(authorId);
+      } catch (error) {
+        console.error("Invalid author ID:", error);
+        // If invalid ObjectId, return empty results
+        return NextResponse.json([]);
+      }
     }
 
     if (tag) {
@@ -28,14 +38,18 @@ export async function GET(request: Request) {
       query.$or = [
         { title: { $regex: search, $options: "i" } },
         { content: { $regex: search, $options: "i" } },
+        { tags: { $regex: search, $options: "i" } },
       ];
     }
 
-    const posts = await db
-      .collection("posts")
-      .find(query)
-      .sort({ createdAt: -1 })
-      .toArray();
+    let postsQuery = db.collection("posts").find(query).sort({ createdAt: -1 });
+
+    // Apply limit if specified
+    if (limit) {
+      postsQuery = postsQuery.limit(limit);
+    }
+
+    const posts = await postsQuery.toArray();
 
     return NextResponse.json(posts);
   } catch (error) {

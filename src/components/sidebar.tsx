@@ -1,12 +1,15 @@
 "use client";
 
+import type React from "react";
+
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Search } from "lucide-react";
+import { TagCloud } from "./tag-cloud";
 
 interface Post {
   _id: string;
@@ -23,6 +26,12 @@ export function Sidebar() {
   const [authors, setAuthors] = useState<Author[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  // Get current search parameters
+  const currentAuthor = searchParams.get("author");
+  const currentSearch = searchParams.get("search");
+  const currentTag = searchParams.get("tag");
 
   useEffect(() => {
     const fetchRecentPosts = async () => {
@@ -37,7 +46,8 @@ export function Sidebar() {
 
     const fetchAuthors = async () => {
       try {
-        const response = await fetch("/api/users");
+        // Use the public endpoint that doesn't require authentication
+        const response = await fetch("/api/users/public");
         const data = await response.json();
         setAuthors(data);
       } catch (error) {
@@ -49,15 +59,62 @@ export function Sidebar() {
     fetchAuthors();
   }, []);
 
+  // Initialize search term from URL if present
+  useEffect(() => {
+    if (currentSearch) {
+      setSearchTerm(currentSearch);
+    }
+  }, [currentSearch]);
+
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Build the query parameters
+    const params = new URLSearchParams();
+
     if (searchTerm.trim()) {
-      router.push(`/?search=${encodeURIComponent(searchTerm)}`);
+      params.set("search", searchTerm.trim());
     }
+
+    // Preserve other existing filters
+    if (currentAuthor) {
+      params.set("author", currentAuthor);
+    }
+
+    if (currentTag) {
+      params.set("tag", currentTag);
+    }
+
+    // Navigate with the updated search parameters
+    router.push(`/?${params.toString()}`);
   };
 
   const handleAuthorFilter = (authorId: string) => {
-    router.push(`/?author=${authorId}`);
+    // Build the query parameters
+    const params = new URLSearchParams();
+
+    // Toggle author filter
+    if (currentAuthor === authorId) {
+      // If clicking the same author, remove the filter
+    } else {
+      params.set("author", authorId);
+    }
+
+    // Preserve other existing filters
+    if (currentSearch) {
+      params.set("search", currentSearch);
+    }
+
+    if (currentTag) {
+      params.set("tag", currentTag);
+    }
+
+    // Navigate with the updated search parameters
+    router.push(`/?${params.toString()}`);
+  };
+
+  const clearFilters = () => {
+    router.push("/");
   };
 
   return (
@@ -78,6 +135,15 @@ export function Sidebar() {
               <Search className="h-4 w-4" />
             </Button>
           </form>
+          {(currentSearch || currentAuthor || currentTag) && (
+            <Button
+              variant="link"
+              onClick={clearFilters}
+              className="px-0 mt-2 h-auto text-sm"
+            >
+              Clear filters
+            </Button>
+          )}
         </CardContent>
       </Card>
 
@@ -116,9 +182,13 @@ export function Sidebar() {
               authors.map((author) => (
                 <Badge
                   key={author._id}
-                  variant="outline"
+                  variant={
+                    currentAuthor === author._id.toString()
+                      ? "default"
+                      : "outline"
+                  }
                   className="cursor-pointer hover:bg-accent"
-                  onClick={() => handleAuthorFilter(author._id)}
+                  onClick={() => handleAuthorFilter(author._id.toString())}
                 >
                   {author.name}
                 </Badge>
@@ -129,6 +199,8 @@ export function Sidebar() {
           </div>
         </CardContent>
       </Card>
+
+      <TagCloud />
     </div>
   );
 }

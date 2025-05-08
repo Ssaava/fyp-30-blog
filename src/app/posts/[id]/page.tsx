@@ -1,16 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useParams, useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Sidebar } from "@/components/sidebar";
 import { Header } from "@/components/header";
 import { useAuth } from "@/lib/auth-context";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Sidebar } from "@/components/sidebar";
 
 interface Post {
   _id: string;
@@ -24,22 +25,21 @@ interface Post {
   };
 }
 
-export default function PostPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
-  const { id } = use(params);
+export default function PostPage() {
   const [post, setPost] = useState<Post | null>(null);
+  const [authorAvatar, setAuthorAvatar] = useState<string>(
+    "/placeholder.svg?height=200&width=200"
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const router = useRouter();
   const { user } = useAuth();
+  const params = useParams<{ id: string }>();
 
   useEffect(() => {
     const fetchPost = async () => {
       try {
-        const response = await fetch(`/api/posts/${id}`);
+        const response = await fetch(`/api/posts/${params.id}`);
         const data = await response.json();
 
         if (!response.ok) {
@@ -47,6 +47,23 @@ export default function PostPage({
         }
 
         setPost(data);
+
+        // Fetch author info to get avatar
+        if (data.author && data.author._id) {
+          try {
+            const authorResponse = await fetch(
+              `/api/users/${data.author._id}/public`
+            );
+            if (authorResponse.ok) {
+              const authorData = await authorResponse.json();
+              if (authorData.avatarUrl) {
+                setAuthorAvatar(authorData.avatarUrl);
+              }
+            }
+          } catch (error) {
+            console.error("Error fetching author info:", error);
+          }
+        }
       } catch (err: any) {
         setError(err.message || "An error occurred while fetching the post");
       } finally {
@@ -54,10 +71,10 @@ export default function PostPage({
       }
     };
 
-    if (id) {
+    if (params.id) {
       fetchPost();
     }
-  }, [id]);
+  }, [params.id]);
 
   if (isLoading) {
     return (
@@ -95,8 +112,23 @@ export default function PostPage({
             <Card className="p-6">
               <div className="mb-6">
                 <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-                <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
-                  <span>By {post.author.name}</span>
+                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                  <Button
+                    variant="link"
+                    className="p-0 h-auto flex items-center gap-2 text-sm"
+                    onClick={() => router.push(`/authors/${post.author._id}`)}
+                  >
+                    <Avatar className="h-6 w-6">
+                      <AvatarImage
+                        src={authorAvatar || "/placeholder.svg"}
+                        alt={post.author.name}
+                      />
+                      <AvatarFallback>
+                        {post.author.name.charAt(0)}
+                      </AvatarFallback>
+                    </Avatar>
+                    {post.author.name}
+                  </Button>
                   <span>•</span>
                   <span>
                     {format(new Date(post.createdAt), "MMMM d, yyyy")}
@@ -118,7 +150,14 @@ export default function PostPage({
                 </div>
                 <div className="flex flex-wrap gap-2 mt-4">
                   {post.tags.map((tag) => (
-                    <Badge key={tag} variant="secondary">
+                    <Badge
+                      key={tag}
+                      variant="secondary"
+                      className="cursor-pointer"
+                      onClick={() =>
+                        router.push(`/?tag=${encodeURIComponent(tag)}`)
+                      }
+                    >
                       {tag}
                     </Badge>
                   ))}

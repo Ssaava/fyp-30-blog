@@ -1,8 +1,8 @@
+import { AppThemeProvider } from "@/components/theme-provider";
+import { AuthProvider } from "@/lib/auth-context";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "@/lib/auth-context";
-import { AppThemeProvider } from "@/components/theme-provider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,13 +17,6 @@ export const metadata: Metadata = {
     "university blog",
     "tech updates",
   ],
-  openGraph: {
-    type: "website",
-    url: "https://fyp-30-blog.vercel.app",
-    title: "FYP-BS30-BLOG",
-    description: "Follow our final year project journey.",
-    images: "/og-image.png",
-  },
 };
 
 export default function RootLayout({
