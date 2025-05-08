@@ -1,6 +1,6 @@
+import { Header } from "@/components/header";
 import { PostList } from "@/components/post-list";
 import { Sidebar } from "@/components/sidebar";
-import { Header } from "@/components/header";
 
 export default function Home() {
   return (
