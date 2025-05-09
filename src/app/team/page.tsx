@@ -1,3 +1,4 @@
+import { SiteLayout } from "@/components/site-layout";
 import {
   Card,
   CardContent,
@@ -5,10 +6,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Github, Linkedin, Mail } from "lucide-react";
-import Link from "next/link";
+import { Mail } from "lucide-react";
 import Image from "next/image";
-import { SiteLayout } from "@/components/site-layout";
+import Link from "next/link";
+import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 export default function TeamPage() {
   const teamMembers = [
@@ -92,14 +93,14 @@ export default function TeamPage() {
                   href={member.links.github}
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <Github size={20} />
+                  <FaGithub className="size-20" />
                   <span className="sr-only">GitHub</span>
                 </Link>
                 <Link
                   href={member.links.linkedin}
                   className="text-muted-foreground hover:text-primary transition-colors"
                 >
-                  <Linkedin size={20} />
+                  <FaLinkedin className="size-20" />
                   <span className="sr-only">LinkedIn</span>
                 </Link>
                 <Link
