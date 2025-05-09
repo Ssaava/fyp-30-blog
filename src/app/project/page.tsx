@@ -57,8 +57,14 @@ export default function ProjectPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Here we Describe the problem our project aims to solve. What
-                  are the current challenges or gaps in existing solutions?
+                  In many rural and urban communities, access to safe drinking
+                  water remains a major public health challenge. Traditional
+                  water testing methods are often expensive, slow, and require
+                  laboratory infrastructure and skilled personnel. This delay in
+                  detecting water contamination leads to health issues such as
+                  waterborne diseases, especially in low-resource settings.
+                  Furthermore, there is limited use of real-time data and
+                  predictive insights in existing monitoring systems.
                 </p>
               </CardContent>
             </Card>
@@ -69,15 +75,17 @@ export default function ProjectPage() {
               </CardHeader>
               <CardContent>
                 <ul className="list-disc list-inside space-y-2 text-muted-foreground">
-                  <li>To develop a system that Monitors Water Quality</li>
                   <li>
-                    To implement Affordable Water Quality Monitoring System
+                    To develop a real-time water quality monitoring system:
                   </li>
+                  <li>To implement an affordable and scalable solution:</li>
                   <li>
-                    To evaluate the effectiveness of IoT and Machine Learning in
-                    Monitoring Water Quality
+                    To integrate AI and machine learning for predictive
+                    analysis:
                   </li>
-                  <li>To document and share our findings through Research</li>
+                  <li>To provide a user-friendly web interface:</li>
+                  <li>To assess the accuracy and efficiency of the system:</li>
+                  <li>To raise awareness and promote safe water practices:</li>
                 </ul>
               </CardContent>
             </Card>
@@ -88,8 +96,16 @@ export default function ProjectPage() {
               </CardHeader>
               <CardContent>
                 <p className="text-muted-foreground">
-                  Here we Describe our proposed solution. How does it address
-                  the problem? What makes it innovative or effective?
+                  We propose an affordable, real-time water quality monitoring
+                  system that integrates biosensors with a web-based dashboard
+                  powered by AI and machine learning. The biosensors collect
+                  physicochemical water parameters such as pH, turbidity, and
+                  temperature. This data is transmitted to a backend server
+                  built with Flask, stored in SQLiteDB, and analyzed using ML
+                  models to detect anomalies and predict contamination risks.
+                  The system is accessible via a responsive web interface,
+                  enabling communities, researchers, and policymakers to make
+                  data-driven decisions about water safety.
                 </p>
               </CardContent>
             </Card>

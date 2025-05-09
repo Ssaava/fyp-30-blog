@@ -44,7 +44,8 @@ export default function Home() {
     {
       icon: <Code className="h-8 w-8 text-primary" />,
       title: "Modern Tech Stack",
-      description: "Built with Next.js, MongoDB, and other modern technologies",
+      description:
+        "Built with Next.js, Flask, SQLite, and other modern technologies",
     },
     {
       icon: <Database className="h-8 w-8 text-primary" />,
