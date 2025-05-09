@@ -18,9 +18,9 @@ export default function TeamPage() {
       bio: "Computer Science student specializing in software development with experience in web technologies and project management.",
       image: "/rashid.jpeg",
       links: {
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        email: "mailto:member1@example.com",
+        github: "https://github.com/rashidkisejjere0784",
+        linkedin: "https://www.linkedin.com/in/rashid-kisejjere-720158217/",
+        email: "mailto:rashidkisejjere0784@gmail.com",
       },
     },
     {
@@ -29,20 +29,20 @@ export default function TeamPage() {
       bio: "Software Engineering student with strong skills in database design, API development, and server-side programming.",
       image: "/emma.png",
       links: {
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        email: "mailto:member2@example.com",
+        github: "https://github.com/Ssaava",
+        linkedin: "https://www.linkedin.com/in/ssava-ema/",
+        email: "mailto:ssavaemma4@gmail.com",
       },
     },
     {
       name: "SSEMAGANDA TREVOUR",
       role: "Frontend Developer",
       bio: "Computer Science student focusing on user interface design and frontend development with experience in React and modern CSS frameworks.",
-      image: "/placeholder.svg?height=300&width=300",
+      image: "/trevor.jpeg",
       links: {
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
-        email: "mailto:member3@example.com",
+        github: "https://github.com/Percy256",
+        linkedin: "https://www.linkedin.com/in/trevour-ssemaganda-346432227/",
+        email: "mailto:semagandatrevour@gmail.com",
       },
     },
     {
@@ -51,8 +51,8 @@ export default function TeamPage() {
       bio: "Software Engineering student with expertise in database management, data modeling, and query optimization.",
       image: "/gum.jpeg",
       links: {
-        github: "https://github.com",
-        linkedin: "https://linkedin.com",
+        github: "https://github.com/Priscillasky",
+        linkedin: "https://www.linkedin.com/in/gum-priscilla/",
         email: "mailto:member4@example.com",
       },
     },
@@ -117,7 +117,7 @@ export default function TeamPage() {
         <div className="mt-16 text-center">
           <h2 className="text-2xl font-bold mb-4">Project Supervision</h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            This project is supervised by Alex Mwotil, Assistant Lecturer in the
+            This project is supervised by Dr Alex Mwotil, Lecturer in the
             Department of Networks at Makerere University.
           </p>
         </div>
