@@ -8,13 +8,13 @@ export default function BlogPage() {
     <SiteLayout>
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-3/4">
+          <div className="flex-1">
             <h1 className="text-3xl font-bold mb-6">Latest Posts</h1>
             <Suspense fallback={<div>Loading Posts...</div>}>
               <PostList />
             </Suspense>
           </div>
-          <div className="md:w-1/4">
+          <div className="max-w-[20rem]">
             <Suspense fallback={<div>Filtering Posts</div>}>
               <Sidebar />
             </Suspense>

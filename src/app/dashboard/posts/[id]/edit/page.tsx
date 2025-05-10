@@ -39,7 +39,7 @@ export default function EditPostPage({
   const { id } = use(params);
   const [post, setPost] = useState<Post | null>(null);
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<string | undefined>("");
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [error, setError] = useState("");
@@ -105,7 +105,7 @@ export default function EditPostPage({
       return;
     }
 
-    if (!content.trim()) {
+    if (!content?.trim()) {
       setError("Content is required");
       return;
     }

@@ -11,7 +11,7 @@ import { Header } from "@/components/header";
 import { useAuth } from "@/lib/auth-context";
 import { MarkdownRenderer } from "@/components/markdown-renderer";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Sidebar } from "@/components/sidebar";
+// import { Sidebar } from "@/components/sidebar";
 
 interface Post {
   _id: string;
@@ -107,71 +107,60 @@ export default function PostPage() {
     <>
       <Header />
       <main className="container mx-auto px-4 py-8">
-        <div className="flex flex-col md:flex-row gap-8">
-          <div className="md:w-3/4">
-            <Card className="p-6">
-              <div className="mb-6">
-                <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
+        <Card className="p-6">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold mb-2">{post.title}</h1>
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Button
+                variant="link"
+                className="p-0 h-auto flex items-center gap-2 text-sm"
+                onClick={() => router.push(`/authors/${post.author._id}`)}
+              >
+                <Avatar className="h-6 w-6">
+                  <AvatarImage
+                    src={authorAvatar || "/placeholder.svg"}
+                    alt={post.author.name}
+                  />
+                  <AvatarFallback>{post.author.name.charAt(0)}</AvatarFallback>
+                </Avatar>
+                {post.author.name}
+              </Button>
+              <span>•</span>
+              <span>{format(new Date(post.createdAt), "MMMM d, yyyy")}</span>
+              {canEdit && (
+                <>
+                  <span>•</span>
                   <Button
                     variant="link"
-                    className="p-0 h-auto flex items-center gap-2 text-sm"
-                    onClick={() => router.push(`/authors/${post.author._id}`)}
+                    className="p-0 h-auto text-sm"
+                    onClick={() =>
+                      router.push(`/dashboard/posts/${post._id}/edit`)
+                    }
                   >
-                    <Avatar className="h-6 w-6">
-                      <AvatarImage
-                        src={authorAvatar || "/placeholder.svg"}
-                        alt={post.author.name}
-                      />
-                      <AvatarFallback>
-                        {post.author.name.charAt(0)}
-                      </AvatarFallback>
-                    </Avatar>
-                    {post.author.name}
+                    Edit
                   </Button>
-                  <span>•</span>
-                  <span>
-                    {format(new Date(post.createdAt), "MMMM d, yyyy")}
-                  </span>
-                  {canEdit && (
-                    <>
-                      <span>•</span>
-                      <Button
-                        variant="link"
-                        className="p-0 h-auto text-sm"
-                        onClick={() =>
-                          router.push(`/dashboard/posts/${post._id}/edit`)
-                        }
-                      >
-                        Edit
-                      </Button>
-                    </>
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-2 mt-4">
-                  {post.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="secondary"
-                      className="cursor-pointer"
-                      onClick={() =>
-                        router.push(`/?tag=${encodeURIComponent(tag)}`)
-                      }
-                    >
-                      {tag}
-                    </Badge>
-                  ))}
-                </div>
-              </div>
-              <div className="prose dark:prose-invert max-w-none">
-                <MarkdownRenderer content={post.content} />
-              </div>
-            </Card>
+                </>
+              )}
+            </div>
+            <div className="flex flex-wrap gap-2 mt-4">
+              {post.tags.map((tag) => (
+                <Badge
+                  key={tag}
+                  variant="secondary"
+                  className="cursor-pointer"
+                  onClick={() =>
+                    router.push(`/?tag=${encodeURIComponent(tag)}`)
+                  }
+                >
+                  {tag}
+                </Badge>
+              ))}
+            </div>
           </div>
-          <div className="md:w-1/4">
-            <Sidebar />
+          <div className="prose dark:prose-invert max-w-none">
+            <MarkdownRenderer content={post.content} />
           </div>
-        </div>
+        </Card>
       </main>
     </>
   );
