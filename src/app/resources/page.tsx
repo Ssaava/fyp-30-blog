@@ -26,43 +26,42 @@ export default function ResourcesPage() {
       description:
         "Initial project proposal document outlining the problem statement, objectives, and methodology.",
       type: "PDF",
-      size: "1.2 MB",
+      size: "0 MB",
       date: "September 15, 2024",
       link: "#",
     },
     {
-      title: "Literature Review",
+      title: "Assessment Report",
       description:
-        "Comprehensive review of existing research and solutions related to our project domain.",
+        "Detailed assessment report based on the data collected about the system.",
       type: "PDF",
-      size: "2.8 MB",
-      date: "October 30, 2024",
-      link: "#",
+      size: "1.4 MB",
+      date: "December 10, 2024",
+      link: "/resources/BSSE-30-assessment-report.pdf",
     },
     {
       title: "System Design Document",
       description:
         "Detailed system architecture, database schema, and component design specifications.",
       type: "PDF",
-      size: "3.5 MB",
+      size: "1.4 MB",
       date: "December 10, 2024",
-      link: "#",
+      link: "/resources/BSSE-30-design-document.pdf",
     },
     {
-      title: "Progress Report",
-      description:
-        "Mid-project progress report detailing accomplishments, challenges, and next steps.",
+      title: "Software Requirements Specifications",
+      description: "Detailed system software requirements specifications.",
       type: "PDF",
-      size: "1.8 MB",
-      date: "February 5, 2025",
-      link: "#",
+      size: "2.4 MB",
+      date: "December 10, 2024",
+      link: "/resources/BSSE-30-software-requirements-specification.pdf",
     },
     {
       title: "Final Report",
       description:
         "Comprehensive final project report with methodology, findings, and conclusions.",
       type: "PDF",
-      size: "5.2 MB",
+      size: "0 MB",
       date: "May 20, 2025",
       link: "#",
     },
@@ -70,29 +69,12 @@ export default function ResourcesPage() {
 
   const presentations = [
     {
-      title: "Project Introduction",
-      description:
-        "Initial presentation introducing the project concept and objectives.",
-      type: "PPTX",
-      size: "4.5 MB",
-      date: "September 20, 2024",
-      link: "#",
-    },
-    {
-      title: "Midterm Presentation",
-      description: "Progress update and demonstration of initial prototype.",
-      type: "PPTX",
-      size: "6.2 MB",
-      date: "January 15, 2025",
-      link: "#",
-    },
-    {
       title: "Final Presentation",
       description:
         "Comprehensive presentation of the completed project and findings.",
       type: "PPTX",
-      size: "8.7 MB",
-      date: "May 10, 2025",
+      size: "0 MB",
+      date: "TBD",
       link: "#",
     },
   ];
@@ -102,16 +84,16 @@ export default function ResourcesPage() {
       title: "Source Code",
       description: "Complete source code of the project with documentation.",
       type: "ZIP",
-      size: "12.4 MB",
-      date: "May 25, 2025",
+      size: "0 MB",
+      date: "TBD",
       link: "#",
     },
     {
       title: "Database Schema",
       description: "SQL scripts and database schema documentation.",
       type: "ZIP",
-      size: "0.8 MB",
-      date: "May 25, 2025",
+      size: "0 MB",
+      date: "TBD",
       link: "#",
     },
   ];
@@ -233,7 +215,7 @@ export default function ResourcesPage() {
                   </CardContent>
                   <CardFooter>
                     <Button variant="outline" className="w-full" asChild>
-                      <Link href={resource.link}>
+                      <Link href={resource.link} target="_blank">
                         <Download className="mr-2 h-4 w-4" />
                         Download
                       </Link>
@@ -271,7 +253,7 @@ export default function ResourcesPage() {
                         <TableCell>{resource.date}</TableCell>
                         <TableCell className="text-right">
                           <Button variant="ghost" size="sm" asChild>
-                            <Link href={resource.link}>
+                            <Link href={resource.link} target="_blank">
                               <Download className="mr-2 h-4 w-4" />
                               Download
                             </Link>

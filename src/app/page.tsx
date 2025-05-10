@@ -111,7 +111,11 @@ export default function Home() {
                 </CardHeader>
                 <CardContent className="flex-grow">
                   <p className="line-clamp-3 text-muted-foreground">
-                    {post.content.substring(0, 150)}...
+                    {post.content
+                      .replace(/[#*`]/g, "")
+                      .replace(/!\[.*?\]\(.*?\)/g, "")
+                      .substring(0, 150)}
+                    ...
                   </p>
                 </CardContent>
                 <CardFooter>
