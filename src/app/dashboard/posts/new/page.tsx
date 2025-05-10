@@ -23,7 +23,7 @@ import { X } from "lucide-react";
 
 export default function NewPostPage() {
   const [title, setTitle] = useState("");
-  const [content, setContent] = useState("");
+  const [content, setContent] = useState<string | undefined>("");
   const [tags, setTags] = useState<string[]>([]);
   const [currentTag, setCurrentTag] = useState("");
   const [error, setError] = useState("");
@@ -62,7 +62,7 @@ export default function NewPostPage() {
       return;
     }
 
-    if (!content.trim()) {
+    if (!content?.trim()) {
       setError("Content is required");
       return;
     }
