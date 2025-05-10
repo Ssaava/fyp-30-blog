@@ -1,8 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { DashboardHeader } from "@/components/dashboard-header";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -12,25 +13,24 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { useAuth } from "@/lib/auth-context";
-import { DashboardHeader } from "@/components/dashboard-header";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { MarkdownRenderer } from "@/components/markdown-renderer";
-// import MarkdownRenderer from "@/components/markdown-renderer"
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+
+import MDEditor from "@uiw/react-md-editor";
+import { useTheme } from "next-themes";
+import rehypeSanitize from "rehype-sanitize";
 
 export default function ProfilePage() {
   const { user, isAuthenticated, loading } = useAuth();
-  const [about, setAbout] = useState("");
+  const [about, setAbout] = useState<string | undefined>("Nothing to preview");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [isSaving, setIsSaving] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
-  const [activeTab, setActiveTab] = useState<string>("edit");
   const router = useRouter();
+  const { theme } = useTheme();
 
   useEffect(() => {
     if (!loading && !isAuthenticated) {
@@ -40,7 +40,7 @@ export default function ProfilePage() {
 
   useEffect(() => {
     if (user) {
-      setAbout(user.about || "");
+      setAbout(user.about || "Nothing to preview");
       setAvatarUrl(user.avatarUrl || "/placeholder.svg?height=200&width=200");
     }
   }, [user]);
@@ -139,43 +139,23 @@ export default function ProfilePage() {
 
               <div className="space-y-2">
                 <Label htmlFor="about">About Me</Label>
-                <div className="border rounded-md">
-                  <Tabs
-                    defaultValue="edit"
-                    value={activeTab}
-                    onValueChange={setActiveTab}
-                  >
-                    <div className="flex items-center justify-between px-4 py-2 border-b">
-                      <TabsList>
-                        <TabsTrigger value="edit">Edit</TabsTrigger>
-                        <TabsTrigger value="preview">Preview</TabsTrigger>
-                      </TabsList>
-                      <div className="text-xs text-muted-foreground">
-                        Markdown supported
-                      </div>
-                    </div>
-                    <TabsContent value="edit" className="p-0">
-                      <Textarea
-                        id="about"
-                        value={about}
-                        onChange={(e) => setAbout(e.target.value)}
-                        placeholder="Write something about yourself..."
-                        className="min-h-[200px] border-0 focus-visible:ring-0 rounded-none resize-none"
-                      />
-                    </TabsContent>
-                    <TabsContent value="preview" className="p-4 min-h-[200px]">
-                      {about ? (
-                        <div className="prose dark:prose-invert max-w-none">
-                          <MarkdownRenderer content={about} />
-                        </div>
-                      ) : (
-                        <div className="text-muted-foreground italic">
-                          Nothing to preview
-                        </div>
-                      )}
-                    </TabsContent>
-                  </Tabs>
+
+                <div data-color-mode={`${theme}`}>
+                  <div className="mb-1 text-right text-xs text-muted-foreground">
+                    Markdown supported
+                  </div>
+                  <div className="wmde-markdown-var"> </div>
+                  <MDEditor
+                    value={about}
+                    onChange={setAbout}
+                    height={"100%"}
+                    previewOptions={{
+                      rehypePlugins: [[rehypeSanitize]],
+                    }}
+                    visibleDragbar={false}
+                  />
                 </div>
+
                 <p className="text-xs text-muted-foreground">
                   This information will be displayed publicly on your profile
                   page
