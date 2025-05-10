@@ -158,7 +158,7 @@ export function Sidebar() {
                 <li key={post._id}>
                   <Button
                     variant="link"
-                    className="p-0 h-auto text-left text-sm font-normal hover:underline"
+                    className="p-0 h-auto !text-wrap text-left text-sm font-normal hover:underline"
                     onClick={() => router.push(`/posts/${post._id}`)}
                   >
                     {post.title}

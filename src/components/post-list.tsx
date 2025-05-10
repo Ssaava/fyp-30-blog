@@ -177,7 +177,7 @@ export function PostList() {
               <CardTitle className="text-2xl">
                 <Button
                   variant="link"
-                  className="p-0 h-auto text-2xl font-bold hover:no-underline"
+                  className="p-0 h-auto !text-wrap text-start text-2xl font-bold hover:no-underline"
                   onClick={() => router.push(`/posts/${post._id}`)}
                 >
                   {post.title}
@@ -186,7 +186,11 @@ export function PostList() {
             </CardHeader>
             <CardContent>
               <p className="line-clamp-3 text-muted-foreground">
-                {post.content.replace(/[#*`]/g, "").substring(0, 200)}...
+                {post.content
+                  .replace(/[#*`]/g, "")
+                  .replace(/!\[.*?\]\(.*?\)/g, "")
+                  .substring(0, 200)}
+                ...
               </p>
               <div className="flex flex-wrap gap-2 mt-4">
                 {post.tags.map((tag) => (

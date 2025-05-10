@@ -33,7 +33,7 @@ export function Header() {
           BSSE-FYP-30
         </Link>
 
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="hidden xl:flex items-center space-x-6">
           {navLinks.map((link) => (
             <Link
               key={link.name}
@@ -55,7 +55,7 @@ export function Header() {
           )}
         </nav>
 
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center xl:hidden">
           <ThemeToggle />
           <button
             onClick={toggleMenu}
@@ -68,7 +68,7 @@ export function Header() {
       </div>
 
       {isMenuOpen && (
-        <div className="md:hidden bg-background border-t">
+        <div className="xl:hidden bg-background border-t">
           <div className="container mx-auto px-4 py-4 flex flex-col space-y-4">
             {navLinks.map((link) => (
               <Link
